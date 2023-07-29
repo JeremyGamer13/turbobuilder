@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/JeremyGamer13/turbobuilder/main/icon.png"/>
+
 # TurboBuilder
 Create extensions for TurboWarp using block-based coding.
 
