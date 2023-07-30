@@ -6,11 +6,12 @@ import javascriptGenerator from '../javascriptGenerator';
 
 class Compiler {
     /**
-     * Generates JavaScript code from the provided workspace.
+     * Generates JavaScript code from the provided workspace & image info.
      * @param {Blockly.Workspace} workspace 
+     * @param {object} imageStates 
      * @returns {string} Generated code.
      */
-    compile(workspace) {
+    compile(workspace, imageStates) {
         const code = javascriptGenerator.workspaceToCode(workspace);
 
         const headerCode = [
@@ -19,16 +20,30 @@ class Compiler {
             `   https://turbobuilder.vercel.app/`,
             `*/`,
             `(function (Scratch) {`,
-            `const variables = {};`,
-            raw_compileVarSection,
-            raw_randomNumberGen
+            `const variables = {};`
         ];
+        const classRegistry = {
+            top: [
+                `class Extension {`
+            ],
+            bottom: [
+                `}`
+            ]
+        }
         const footerCode = [
             `Scratch.extensions.register(new Extension());`,
             `})(Scratch);`
         ];
 
-        return [].concat(headerCode, code, footerCode).join('\n');
+        if (imageStates) {
+            if (imageStates.icon.image) {
+                // add icon uri
+                const url = imageStates.icon.image;
+                headerCode.push(`const categoryIconURI = ${JSON.stringify(url)};`);
+            }
+        }
+
+        return [].concat(headerCode, classRegistry.top, classRegistry.bottom, code, footerCode).join('\n');
     }
 }
 

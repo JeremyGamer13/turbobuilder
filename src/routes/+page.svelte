@@ -3,11 +3,16 @@
 
     // Components
     import NavigationBar from "$lib/NavigationBar/NavigationBar.svelte";
+    import NavigationDivider from "$lib/NavigationBar/Divider.svelte";
+    import NavigationButton from "$lib/NavigationBar/Button.svelte";
+    import StyledButton from "$lib/StyledComponents/ToolboxButton.svelte";
 
     // Toolbox
     import Toolbox from "$lib/Toolbox/Toolbox.xml?raw";
 
     import JSZip from "jszip";
+    import beautify from "js-beautify";
+    import Prism from "prismjs";
     import * as FileSaver from "file-saver";
     import fileDialog from "../resources/fileDialog";
 
@@ -74,16 +79,26 @@
     let compiler;
     let lastGeneratedCode = "";
 
+    const extensionImageStates = {
+        icon: {
+            failed: false,
+            square: false,
+            loading: false,
+            image: "",
+        },
+    };
+
+    function updateGeneratedCode() {
+        const code = compiler.compile(workspace, extensionImageStates);
+        lastGeneratedCode = code;
+    }
     onMount(() => {
         console.log("ignore the warnings above we dont care about those");
 
         window.onbeforeunload = () => "";
         compiler = new Compiler(workspace);
         // workspace was changed
-        workspace.addChangeListener(() => {
-            const code = compiler.compile(workspace);
-            lastGeneratedCode = code;
-        });
+        workspace.addChangeListener(updateGeneratedCode);
     });
 
     let fileMenu;
@@ -174,9 +189,71 @@
             });
         });
     }
+
+    // code display & handling
+    function beautifyGeneratedCode(code) {
+        const beautified = beautify.js(code, {
+            indent_size: 4,
+            space_in_empty_paren: true,
+        });
+        return beautified;
+    }
+    function displayGeneratedCode(code) {
+        const beautified = beautifyGeneratedCode(code);
+        const highlighted = Prism.highlight(
+            beautified,
+            Prism.languages.javascript
+        );
+        return highlighted;
+    }
+
+    // image importing
+    function extensionIconAdded(event) {
+        console.log(event);
+        const filePicker = event.target;
+        // check if we have a file
+        if (!filePicker.files || !filePicker.files[0]) {
+            // remove the image
+            extensionImageStates.icon.failed = false;
+            extensionImageStates.icon.square = false;
+            extensionImageStates.icon.loading = false;
+            extensionImageStates.icon.image = "";
+            updateGeneratedCode();
+            return;
+        }
+        const file = filePicker.files[0];
+
+        extensionImageStates.icon.loading = true;
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+            // file finished loading
+            const url = fileReader.result;
+            extensionImageStates.icon.image = url;
+            updateGeneratedCode();
+            // start checking the other stuff
+            const image = new Image();
+            image.onload = () => {
+                extensionImageStates.icon.failed = false;
+                extensionImageStates.icon.square = image.width === image.height;
+                // mark as loading finished
+                extensionImageStates.icon.loading = false;
+            };
+            image.onerror = () => {
+                extensionImageStates.icon.failed = true;
+                extensionImageStates.icon.square = false;
+                // mark as loading finished
+                extensionImageStates.icon.loading = false;
+            };
+            image.src = url;
+        };
+        fileReader.readAsDataURL(file);
+    }
 </script>
 
 <NavigationBar>
+    <NavigationButton>File</NavigationButton>
+    <NavigationButton>Edit</NavigationButton>
+    <NavigationDivider />
     <input
         class="project-name"
         type="text"
@@ -187,40 +264,72 @@
 </NavigationBar>
 <div class="main">
     <div class="row-menus">
-        <div class="blocklyWrapper">
-            <BlocklyComponent {config} locale={en} bind:workspace />
+        <div class="row-first-submenus">
+            <div class="blockMenuButtons">
+                <StyledButton>Create an Extension Block</StyledButton>
+            </div>
+            <div class="blocklyWrapper">
+                <BlocklyComponent {config} locale={en} bind:workspace />
+            </div>
         </div>
         <div class="row-submenus">
             <div class="assetsWrapper">
                 <h1>Assets</h1>
-                {#if projectName}
-                    <p>{projectName} extension</p>
-                {:else}
-                    <p>Extension</p>
-                {/if}
                 <p>
-                    These things are not required, you can leave them empty if
-                    you want!
+                    Extra things that will appear under
+                    {#if projectName}
+                        "{projectName}"
+                    {:else}
+                        "Extension"
+                    {/if}
+                    in the block list.
+                    <br />
+                    These things are not required, so you can leave them empty if
+                    you do not need them.
                 </p>
-                <br />
                 <p>
                     Documentation URL:
                     <input type="text" placeholder="https://..." />
                 </p>
                 <p>
                     Extension Icon:
-                    <input type="file" />
+                    <input type="file" on:change={extensionIconAdded} />
                 </p>
-                <!-- <p class="warning">
-                    Warning! This is not an image! The icon may appear broken!
-                </p> -->
+                {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
+                    <img
+                        alt="Extension Icon"
+                        title="Extension Icon"
+                        class="extensionIcon"
+                        src={extensionImageStates.icon.image}
+                    />
+                {/if}
+                {#if extensionImageStates.icon.image}
+                    {#if extensionImageStates.icon.failed}
+                        <p class="warning">
+                            The extension icon is not an image, this may appear
+                            broken in the category list.
+                        </p>
+                    {/if}
+                    {#if !extensionImageStates.icon.square}
+                        <p class="warning">
+                            The image is not square, this may appear broken in
+                            the category list.
+                        </p>
+                    {/if}
+                {/if}
+                <h3>Extra Icons</h3>
+                <p>
+                    Blocks can use their own icons instead of the Extension
+                    icon.
+                    <br />
+                    Add more images here to use them.
+                </p>
+                <StyledButton>Add Image</StyledButton>
             </div>
             <div class="codeWrapper">
-                <textarea
-                    value={lastGeneratedCode}
-                    disabled="true"
-                    style="width:100%;height:100%;border:0;padding:0;color:white;background:black;font-family:monospace"
-                />
+                <div class="codeDisplay">
+                    {@html displayGeneratedCode(lastGeneratedCode)}
+                </div>
             </div>
         </div>
     </div>
@@ -230,6 +339,21 @@
     :root {
         --nav-height: 3rem;
     }
+    input[type="file"]::file-selector-button {
+        padding: 0.35rem 1.65rem;
+
+        font-size: 0.75rem;
+        color: black;
+        background: transparent;
+        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+    }
+    input[type="file"]::file-selector-button:focus,
+    input[type="file"]::file-selector-button:hover,
+    input[type="file"]::file-selector-button:active {
+        background: white;
+    }
 
     .main {
         position: absolute;
@@ -237,6 +361,8 @@
         top: var(--nav-height);
         width: 100%;
         height: calc(100% - var(--nav-height));
+
+        min-width: 870px;
     }
 
     .project-name {
@@ -275,6 +401,12 @@
         transition: 0.25s;
     }
 
+    .extensionIcon {
+        width: 96px;
+        height: 96px;
+        object-fit: contain;
+    }
+
     .row-menus {
         display: flex;
         flex-direction: row;
@@ -288,21 +420,55 @@
         width: 35%;
         height: 100%;
     }
-
-    .blocklyWrapper {
-        position: relative;
+    .row-first-submenus {
+        display: flex;
+        flex-direction: column;
         width: 65%;
         height: 100%;
     }
-    .assetsWrapper {
+
+    .blockMenuButtons {
         position: relative;
         width: 100%;
-        height: 50%;
+        height: 48px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        background: #f9f9f9;
+    }
+
+    .blocklyWrapper {
+        position: relative;
+        width: 100%;
+        height: 95%;
+    }
+    .assetsWrapper {
+        position: relative;
+        width: calc(100% - 16px);
+        height: calc(50% - 16px);
+        padding: 8px;
+        overflow: auto;
     }
     .codeWrapper {
         position: relative;
         width: 100%;
         height: 50%;
+    }
+
+    .codeDisplay {
+        width: 100%;
+        height: 100%;
+
+        border: 0;
+        padding: 0;
+        overflow: auto;
+
+        background: #f9f9f9;
+        white-space: pre-wrap;
+        font-family: monospace !important;
     }
 
     .warning {

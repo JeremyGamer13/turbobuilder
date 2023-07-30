@@ -5,7 +5,7 @@
 
 <div class="nav">
     <img
-        src="/images/icon.png"
+        src="/favicon.png"
         alt="Logo"
         class="logo-margin"
         style="height: 100%;"
