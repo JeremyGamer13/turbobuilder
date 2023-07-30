@@ -77,6 +77,8 @@
 
     let workspace;
     let compiler;
+    let projectName = "";
+    let projectID = "";
     let lastGeneratedCode = "";
 
     const extensionImageStates = {
@@ -86,10 +88,36 @@
             loading: false,
             image: "",
         },
+        menuicon: {
+            failed: false,
+            square: false,
+            loading: false,
+            image: "",
+        },
+    };
+    const extensionMetadata = {
+        id: "extensionID",
+        name: "Extension",
+        docsURL: "",
+        color1: "",
+        color2: "",
+        color3: "",
     };
 
     function updateGeneratedCode() {
-        const code = compiler.compile(workspace, extensionImageStates);
+        extensionMetadata.name = "Extension";
+        extensionMetadata.id = "extensionID";
+        if (projectName) {
+            extensionMetadata.name = projectName;
+        }
+        if (projectID) {
+            extensionMetadata.id = projectID;
+        }
+        const code = compiler.compile(
+            workspace,
+            extensionMetadata,
+            extensionImageStates
+        );
         lastGeneratedCode = code;
     }
     onMount(() => {
@@ -110,7 +138,6 @@
         fileMenu.style.display = "none";
     }
 
-    let projectName = "";
     function downloadProject() {
         // generate file name
         let filteredProjectName = projectName.replace(/[^a-z0-9\-]+/gim, "_");
