@@ -326,9 +326,42 @@
                 </p>
                 <StyledButton>Add Image</StyledButton>
             </div>
-            <div class="codeWrapper">
-                <div class="codeDisplay">
-                    {@html displayGeneratedCode(lastGeneratedCode)}
+            <div class="row-subsubmenus">
+                <div class="codeActionsWrapper">
+                    <p style="margin-right: 12px"><b>Extension Code</b></p>
+                    <StyledButton
+                        on:click={() => {
+                            // copy code
+                            const code =
+                                beautifyGeneratedCode(lastGeneratedCode);
+                            navigator.clipboard.writeText(code);
+                        }}
+                    >
+                        Copy
+                    </StyledButton>
+                    <div style="margin-right: 12px" />
+                    <StyledButton
+                        on:click={() => {
+                            // download
+                            const code =
+                                beautifyGeneratedCode(lastGeneratedCode);
+                            const filteredProjectName = projectName.replace(
+                                /[^a-z0-9\-]+/gim,
+                                "_"
+                            );
+                            const blob = new Blob([code], {
+                                type: "text/javascript;charset=UTF-8",
+                            });
+                            FileSaver.saveAs(blob, filteredProjectName + ".js");
+                        }}
+                    >
+                        Download
+                    </StyledButton>
+                </div>
+                <div class="codeWrapper">
+                    <div class="codeDisplay">
+                        {@html displayGeneratedCode(lastGeneratedCode)}
+                    </div>
                 </div>
             </div>
         </div>
@@ -426,6 +459,12 @@
         width: 65%;
         height: 100%;
     }
+    .row-subsubmenus {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 50%;
+    }
 
     .blockMenuButtons {
         position: relative;
@@ -443,7 +482,7 @@
     .blocklyWrapper {
         position: relative;
         width: 100%;
-        height: 95%;
+        height: calc(100% - 48px);
     }
     .assetsWrapper {
         position: relative;
@@ -452,10 +491,22 @@
         padding: 8px;
         overflow: auto;
     }
+    .codeActionsWrapper {
+        position: relative;
+        width: 100%;
+        height: 48px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        background: #f9f9f9;
+    }
     .codeWrapper {
         position: relative;
         width: 100%;
-        height: 50%;
+        height: calc(100% - 48px);
     }
 
     .codeDisplay {
