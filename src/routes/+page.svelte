@@ -303,6 +303,29 @@
                         src={extensionImageStates.icon.image}
                     />
                 {/if}
+                <p><i>The extension will appear like this in the menu:</i></p>
+                <div class="extensionMenuPreview">
+                    <div style="text-align: center;">
+                        {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
+                            <div
+                                class="extensionBubbleIcon"
+                                style={`border: 0; border-radius: 0; background-image: url(${extensionImageStates.icon.image})`}
+                            />
+                        {:else}
+                            <div
+                                class="extensionBubbleIcon"
+                                style="background: dodgerblue"
+                            />
+                        {/if}
+                        <div class="extensionBubbleName">
+                            {#if projectName}
+                                {projectName}
+                            {:else}
+                                extensionID
+                            {/if}
+                        </div>
+                    </div>
+                </div>
                 {#if extensionImageStates.icon.image}
                     {#if extensionImageStates.icon.failed}
                         <p class="warning">
@@ -464,6 +487,32 @@
         flex-direction: column;
         width: 100%;
         height: 50%;
+    }
+
+    .extensionMenuPreview {
+        width: 60px;
+        cursor: pointer;
+        overflow: hidden;
+        color: #575e75;
+        user-select: none;
+    }
+    .extensionMenuPreview:hover {
+        color: #4c97ff !important;
+    }
+    .extensionMenuPreview:focus,
+    .extensionMenuPreview:active {
+        background-color: #e9eef2;
+    }
+    .extensionBubbleIcon {
+        width: 20px;
+        height: 20px;
+        background-size: 100%;
+        border-radius: 100%;
+        margin: 0 auto 0.125rem;
+        border: 1px rgba(0, 0, 0, 0.2) solid;
+    }
+    .extensionBubbleName {
+        font-size: 0.65rem;
     }
 
     .blockMenuButtons {
