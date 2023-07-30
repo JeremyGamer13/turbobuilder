@@ -40,10 +40,35 @@
 			.categoryBubble {
 				border: 1px rgba(0,0,0,0.35) solid;
 			}
+
+			.__alert_prompt {
+				position: fixed;
+				left: 24px;
+				top: 24px;
+				z-index: 100000;
+				padding: 14px 24px;
+				background: rgb(255, 196, 0);
+				box-shadow: 0px 0px 16px black;
+				border-radius: 6px;
+				font-weight: bold;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+			}
 		</style>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
+		<div class="__alert_prompt" id="Zm5BSEgzQW5HeW9yZkFkNEhpbGJiamtpZmdoOGNDc2lMR29JSzF0K2JnPT0=">
+			<p style="margin-block: 0;">TurboBuilder is currently in development. Features may not work correctly here.</p>
+			<button
+				style="margin: 0; margin-left: 8px; background: transparent; border: 0; outline: 0; padding: 0; cursor: pointer;"
+				onclick="document.getElementById('Zm5BSEgzQW5HeW9yZkFkNEhpbGJiamtpZmdoOGNDc2lMR29JSzF0K2JnPT0=').remove()"
+			>
+				<img width="24" height="24" src="/images/close.svg">
+			</button>
+		</div>
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
