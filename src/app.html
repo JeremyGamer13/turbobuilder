@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<title>TurboBuilder - Make extensions with blocks</title>
+    	<meta name="description" content="Create TurboWarp extensions using Scratch-like block coding." />
+    	<meta name="keywords" content="turbowarp, extensions, blocks" />
+    	<meta name="author" content="JeremyGamer13" />
+    	<meta name="theme-color" content="#ff4b4b" />
+    	<meta name="og:image" content="icon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<style>
+			*:not(code) {
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+
+			a {
+				color: #ff4b4b;
+			}
+			a:hover {
+				color: #ff7373;
+			}
+			a:active {
+				color: #a52b2b;
+			}
+
+			/* blockly overrides */
+			.blocklyMenu {
+				color: black;
+			}
+			.blocklyToolboxCategory {
+				cursor: pointer;
+			}
+			.blocklyTreeLabel {
+				font-size: 10px !important;
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+			.categoryBubble {
+				border: 1px rgba(0,0,0,0.35) solid;
+			}
+		</style>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

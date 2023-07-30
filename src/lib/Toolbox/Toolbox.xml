@@ -1,0 +1,6 @@
+<xml>
+    <category name="Control" colour="#FFAB19">
+        <block type="control_ifthen" />
+        <block type="control_ifthenelse" />
+    </category>
+</xml>
