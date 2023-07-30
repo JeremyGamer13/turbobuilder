@@ -275,6 +275,11 @@
         };
         fileReader.readAsDataURL(file);
     }
+
+    // validation
+    function isExtensionIDInvalid(id) {
+        return Boolean(String(id).match(/[^a-z0-9]/gim));
+    }
 </script>
 
 <NavigationBar>
@@ -284,16 +289,59 @@
     <input
         class="project-name"
         type="text"
-        placeholder="Extension Name here"
+        placeholder="Extension ID (ex: extensionID)"
+        style={"margin-left:4px;margin-right:4px" +
+            (isExtensionIDInvalid(projectID)
+                ? ";background-color:#ffabab;text-decoration:red underline;"
+                : "")}
+        bind:value={projectID}
+        on:change={updateGeneratedCode}
+    />
+    {#if isExtensionIDInvalid(projectID)}
+        <p style="color:white;margin-left:4px">
+            <b>Extension ID must be only letters and numbers.</b>
+        </p>
+    {/if}
+    <NavigationDivider />
+    <input
+        class="project-name"
+        type="text"
+        placeholder="Extension Name (ex: Extension)"
         style="margin-left:4px;margin-right:4px"
         bind:value={projectName}
+        on:change={updateGeneratedCode}
     />
 </NavigationBar>
 <div class="main">
     <div class="row-menus">
         <div class="row-first-submenus">
             <div class="blockMenuButtons">
+                <StyledButton>Edit Extension Colors</StyledButton>
+                <div style="margin-left:8px" />
                 <StyledButton>Create an Extension Block</StyledButton>
+                <div style="margin-left:8px" />
+                <div class="extensionMenuPreview">
+                    <div style="text-align: center;">
+                        {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
+                            <div
+                                class="extensionBubbleIcon"
+                                style={`border: 0; border-radius: 0; background-image: url(${extensionImageStates.icon.image})`}
+                            />
+                        {:else}
+                            <div
+                                class="extensionBubbleIcon"
+                                style="background: dodgerblue"
+                            />
+                        {/if}
+                        <div class="extensionBubbleName">
+                            {#if projectName}
+                                {projectName}
+                            {:else}
+                                Extension
+                            {/if}
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="blocklyWrapper">
                 <BlocklyComponent {config} locale={en} bind:workspace />
@@ -316,7 +364,12 @@
                 </p>
                 <p>
                     Documentation URL:
-                    <input type="text" placeholder="https://..." />
+                    <input
+                        type="text"
+                        placeholder="https://..."
+                        bind:value={extensionMetadata.docsURL}
+                        on:change={updateGeneratedCode}
+                    />
                 </p>
                 <p>
                     Extension Icon:
@@ -330,29 +383,6 @@
                         src={extensionImageStates.icon.image}
                     />
                 {/if}
-                <p><i>The extension will appear like this in the menu:</i></p>
-                <div class="extensionMenuPreview">
-                    <div style="text-align: center;">
-                        {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
-                            <div
-                                class="extensionBubbleIcon"
-                                style={`border: 0; border-radius: 0; background-image: url(${extensionImageStates.icon.image})`}
-                            />
-                        {:else}
-                            <div
-                                class="extensionBubbleIcon"
-                                style="background: dodgerblue"
-                            />
-                        {/if}
-                        <div class="extensionBubbleName">
-                            {#if projectName}
-                                {projectName}
-                            {:else}
-                                extensionID
-                            {/if}
-                        </div>
-                    </div>
-                </div>
                 {#if extensionImageStates.icon.image}
                     {#if extensionImageStates.icon.failed}
                         <p class="warning">
