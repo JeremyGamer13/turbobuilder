@@ -30,9 +30,11 @@
     function getExampleData(color1, color2, color3, color3Included) {
         const tokens = ["[{{COLOR1}}]", "[{{COLOR2}}]", "[{{COLOR3}}]"];
         if (!color3 || !color3Included) {
-            const hsl = ColorUtil.hexToHSL(color1);
-            const light = Math.max(0, hsl.l - 20);
-            color3 = ColorUtil.hslToHex(hsl.h, hsl.s, light);
+            const rgb = ColorUtil.hexToRGB(color1);
+            const r = Math.max(0, rgb.r - 51);
+            const g = Math.max(0, rgb.g - 51);
+            const b = Math.max(0, rgb.b - 51);
+            color3 = ColorUtil.rgbToHex(r, g, b);
         }
         return colorExample
             .replaceAll(tokens[0], color1)
