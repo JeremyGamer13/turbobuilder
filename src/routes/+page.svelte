@@ -7,6 +7,9 @@
     import NavigationButton from "$lib/NavigationBar/Button.svelte";
     import StyledButton from "$lib/StyledComponents/ToolboxButton.svelte";
 
+    // Modals
+    import ExtensionColorsModal from "$lib/MenuModals/ExtensionColors.svelte";
+
     // Toolbox
     import Toolbox from "$lib/Toolbox/Toolbox.xml?raw";
 
@@ -99,8 +102,8 @@
         id: "extensionID",
         name: "Extension",
         docsURL: "",
-        color1: "",
-        color2: "",
+        color1: "#0088ff",
+        color2: "#0063ba",
         color3: "",
     };
 
@@ -280,8 +283,27 @@
     function isExtensionIDInvalid(id) {
         return Boolean(String(id).match(/[^a-z0-9]/gim));
     }
+
+    // Modals
+    const ModalState = {
+        extensionColors: false,
+    };
 </script>
 
+{#if ModalState.extensionColors}
+    <ExtensionColorsModal
+        color1={extensionMetadata.color1}
+        color2={extensionMetadata.color2}
+        color3={extensionMetadata.color3}
+        on:completed={(colors) => {
+            ModalState.extensionColors = false;
+            extensionMetadata.color1 = colors.detail.color1;
+            extensionMetadata.color2 = colors.detail.color2;
+            extensionMetadata.color3 = colors.detail.color3;
+            updateGeneratedCode();
+        }}
+    />
+{/if}
 <NavigationBar>
     <NavigationButton>File</NavigationButton>
     <NavigationButton>Edit</NavigationButton>
@@ -316,7 +338,13 @@
     <div class="row-menus">
         <div class="row-first-submenus">
             <div class="blockMenuButtons">
-                <StyledButton>Edit Extension Colors</StyledButton>
+                <StyledButton
+                    on:click={() => {
+                        ModalState.extensionColors = true;
+                    }}
+                >
+                    Edit Extension Colors
+                </StyledButton>
                 <div style="margin-left:8px" />
                 <StyledButton>Create an Extension Block</StyledButton>
                 <div style="margin-left:8px" />
@@ -330,7 +358,7 @@
                         {:else}
                             <div
                                 class="extensionBubbleIcon"
-                                style="background: dodgerblue"
+                                style={`background: ${extensionMetadata.color1}; border-color: ${extensionMetadata.color2}`}
                             />
                         {/if}
                         <div class="extensionBubbleName">
