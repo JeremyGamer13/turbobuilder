@@ -26,6 +26,9 @@
             color3,
         });
     }
+    function cancel() {
+        dispatch("cancel");
+    }
 
     function getExampleData(color1, color2, color3, color3Included) {
         const tokens = ["[{{COLOR1}}]", "[{{COLOR2}}]", "[{{COLOR3}}]"];
@@ -109,13 +112,25 @@
             </div>
         </div>
         <div class="modal-buttons">
-            <button on:click={event}>OK</button>
+            <button class="button-accept" on:click={event}>OK</button>
+            <div style="margin-left:6px" />
+            <button class="button-cancel" on:click={cancel}>Cancel</button>
         </div>
     </div>
 </div>
 
 <style>
-    button {
+    .button-cancel {
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background: white;
+        color: black;
+        font-weight: bold;
+        padding: 0.75rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+    .button-accept {
         background: #ff4b4b;
         color: white;
         font-weight: bold;
@@ -125,6 +140,7 @@
         border: 0;
         cursor: pointer;
     }
+
     label {
         font-weight: bold;
         font-size: 0.625rem;
@@ -197,14 +213,14 @@
     }
     .modal-content {
         width: 100%;
-        height: 80%;
+        height: 75%;
         overflow: auto;
     }
     .modal-buttons {
         width: 100%;
-        height: 10%;
+        height: 15%;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
     }

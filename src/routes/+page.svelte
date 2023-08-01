@@ -302,6 +302,10 @@
             extensionMetadata.color3 = colors.detail.color3;
             updateGeneratedCode();
         }}
+        on:cancel={() => {
+            ModalState.extensionColors = false;
+            updateGeneratedCode();
+        }}
     />
 {/if}
 <NavigationBar>
