@@ -131,13 +131,13 @@
         cursor: pointer;
     }
     .button-accept {
+        border: 1px solid #ff4b4b;
         background: #ff4b4b;
         color: white;
         font-weight: bold;
         padding: 0.75rem 1rem;
         border-radius: 0.25rem;
         font-size: 0.85rem;
-        border: 0;
         cursor: pointer;
     }
 

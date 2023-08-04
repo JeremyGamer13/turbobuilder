@@ -9,6 +9,10 @@
 
     // Modals
     import ExtensionColorsModal from "$lib/MenuModals/ExtensionColors.svelte";
+    import CreateBlockModal from "$lib/MenuModals/CreateBlock.svelte";
+
+    // Modal Scripts
+    import CreateBlockModalScript from "$lib/MenuModals/createblock.js";
 
     // Toolbox
     import Toolbox from "$lib/Toolbox/Toolbox.xml?raw";
@@ -290,6 +294,11 @@
     };
 </script>
 
+<CreateBlockModal
+    color1={extensionMetadata.color1}
+    color2={extensionMetadata.color2}
+    color3={extensionMetadata.color3}
+/>
 {#if ModalState.extensionColors}
     <ExtensionColorsModal
         color1={extensionMetadata.color1}
@@ -350,7 +359,13 @@
                     Edit Extension Colors
                 </StyledButton>
                 <div style="margin-left:8px" />
-                <StyledButton>Create an Extension Block</StyledButton>
+                <StyledButton
+                    on:click={() => {
+                        CreateBlockModalScript.open();
+                    }}
+                >
+                    Create an Extension Block
+                </StyledButton>
                 <div style="margin-left:8px" />
                 <div class="extensionMenuPreview">
                     <div style="text-align: center;">
