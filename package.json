@@ -16,6 +16,7 @@
 	"type": "module",
 	"dependencies": {
 		"@blockly/continuous-toolbox": "^5.0.2",
+		"@blockly/theme-dark": "^6.0.1",
 		"@sveltejs/adapter-vercel": "^3.0.2",
 		"file-saver": "^2.0.5",
 		"js-beautify": "^1.14.9",

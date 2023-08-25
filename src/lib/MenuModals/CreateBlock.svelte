@@ -1,5 +1,6 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
+    import EventManager from "../../resources/events";
     import ModalScript from "./createblock.js";
     import ColorUtil from "./color.js";
 
@@ -38,13 +39,27 @@
         disable: false,
         theme: Theme,
         renderer: "zelos",
+        grid: {
+            spacing: 25,
+            length: 3,
+            colour: "#00000022",
+            snap: false,
+        },
         zoom: {
             controls: true,
-            wheel: true,
+            wheel: false,
             startScale: 1.2,
             maxScale: 4,
             minScale: 0.25,
             scaleSpeed: 1.1,
+        },
+        move: {
+            scrollbars: {
+                horizontal: true,
+                vertical: true,
+            },
+            drag: true,
+            wheel: true,
         },
     };
 
@@ -56,6 +71,13 @@
             return !String(id).match(/[^a-zA-Z0-9_]+/gim);
         },
     };
+
+    onMount(() => {
+        EventManager.allowAttachment();
+        EventManager.on(EventManager.EVENT_THEME_CHANGED, () => {
+            workspace.refreshTheme();
+        });
+    });
 
     export let color1 = "#ff0000";
     export let color2 = "#00ff00";
@@ -105,6 +127,7 @@
         // create block style
         Theme.blockStyles["core_makeablock_colors"] = getBlockStyle();
         console.log(Theme);
+        workspace.refreshTheme();
 
         visible = true;
         state = getDefaultState();
@@ -145,9 +168,7 @@
                     type="text"
                     placeholder="Block ID (ex: numberIsWithinNumbers)"
                     class="block-id"
-                    style={!validation.id(state.block.id)
-                        ? "background-color: #ffaaaa"
-                        : ""}
+                    data-invalid={!validation.id(state.block.id)}
                     bind:value={state.block.id}
                 />
                 {#if !validation.id(state.block.id)}
@@ -335,6 +356,12 @@
         align-items: center;
         overflow: hidden;
     }
+    :global(body.dark) .bg {
+        background-color: #333333b0;
+    }
+    :global(body.dark) .modal {
+        background-color: #111;
+    }
 
     .modal-title {
         width: 100%;
@@ -345,6 +372,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+    :global(body.dark) .modal-title {
+        background-color: #333;
     }
     .modal-content {
         width: 100%;
@@ -377,6 +407,19 @@
         outline: 4px solid #ff4b4b44;
         transition: 0.25s linear;
     }
+    :global(body.dark) .block-id {
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.7);
+        color: white;
+    }
+    .block-id[data-invalid="true"] {
+        background-color: #ffabab;
+        text-decoration: red underline;
+    }
+    :global(body.dark) .block-id[data-invalid="true"] {
+        background-color: #9b0000 !important;
+        text-decoration: red underline;
+    }
 
     .block-id-warning {
         width: 100%;
@@ -395,11 +438,18 @@
         border-radius: 12px;
         cursor: pointer;
     }
+    :global(body.dark) .block-addition {
+        color: white;
+        border-color: #ccc;
+    }
     .block-addition:focus,
     .block-addition:hover {
-        border-color: #ff4b4b;
+        border-color: #ff4b4b !important;
     }
     .block-addition:active {
-        border-color: black;
+        border-color: black !important;
+    }
+    :global(body.dark) .block-addition:active {
+        border-color: rgb(114, 114, 114) !important;
     }
 </style>

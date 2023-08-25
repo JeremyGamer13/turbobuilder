@@ -10,10 +10,16 @@
     	<meta name="theme-color" content="#ff4b4b" />
     	<meta name="og:image" content="/images/icon.png" />
 		<meta name="viewport" content="width=device-width" />
-  		<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css" rel="stylesheet" />
+		<style id="XTI0GZwZotMzDMi0wcGctLFttIWctMdtLPXI9M0aGGDQyMHRpMViW3E="></style>
 		<style>
 			*:not(code, .token) {
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+			body {
+				color: black;
+			}
+			body.dark {
+				color: white;
 			}
 
 			a {
@@ -36,6 +42,7 @@
 			.blocklyTreeLabel {
 				font-size: 10px !important;
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+				padding: 0 8px;
 			}
 			.categoryBubble {
 				border: 1px rgba(0,0,0,0.35) solid;
@@ -81,9 +88,32 @@
 				alert.remove();
 			}
 
+			// prism styles
+			const prismStyles = {
+				light: null,
+				dark: null
+			};
+			const getPrismStyleUrl_ = (id) => {
+				switch (id) {
+					case 'light':
+						return 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css'; 
+					case 'dark':
+						return 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism-tomorrow.min.css'; 
+					default:
+						return ''; 
+				}
+			};
+			const loadPrismStyle_ = (id) => {
+				const url = getPrismStyleUrl_(id);
+				console.log('grabbing prism style for', id);
+				return fetch(url);
+			};
+
 			// handle theme updating
+			const head = document.head;
 			const body = document.body;
-			const updateTheme = () => {
+			const updateTheme = async () => {
+				// update body
 				const mode = localStorage.getItem('tb:theme');
 				if (mode === 'dark') {
 					body.setAttribute("class", "dark");
@@ -92,6 +122,26 @@
 					body.removeAttribute("class");
 					body.style.background = "";
 				}
+				// update head
+				const styleElement = document.getElementById("XTI0GZwZotMzDMi0wcGctLFttIWctMdtLPXI9M0aGGDQyMHRpMViW3E=");
+				let promise;
+				let styleCode = '';
+				let styleId = 'dark';
+				if (mode === 'dark') {
+					styleCode = prismStyles.dark;
+					if (!prismStyles.dark) promise = loadPrismStyle_('dark');
+				} else {
+					styleId = 'light';
+					styleCode = prismStyles.light;
+					if (!prismStyles.light) promise = loadPrismStyle_('light');
+				}
+				if (promise) {
+					const res = await promise;
+					const text = await res.text();
+					styleCode = text;
+					prismStyles[styleId] = styleCode;
+				}
+				styleElement.innerHTML = styleCode;
 			};
 
 			window.themeUpdated_ = () => {

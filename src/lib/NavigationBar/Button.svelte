@@ -28,13 +28,14 @@
         font-weight: bold;
         font-size: 0.75rem;
         color: white;
-        background: #ff4b4b;
+        background: transparent;
         cursor: pointer;
         border: 0;
     }
-    button:focus,
-    button:hover,
-    button:active {
-        background: rgb(211, 62, 62);
+    button:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    :global(body.dark) button:hover {
+        background: rgba(255, 255, 255, 0.2);
     }
 </style>

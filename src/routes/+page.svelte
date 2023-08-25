@@ -22,6 +22,7 @@
     import Prism from "prismjs";
     import * as FileSaver from "file-saver";
     import fileDialog from "../resources/fileDialog";
+    import EventManager from "../resources/events";
 
     import Blockly from "blockly/core";
     import * as ContinuousToolboxPlugin from "@blockly/continuous-toolbox";
@@ -67,9 +68,15 @@
         disable: false,
         theme: Theme,
         renderer: "zelos",
+        grid: {
+            spacing: 25,
+            length: 3,
+            colour: "#00000022",
+            snap: false,
+        },
         zoom: {
             controls: true,
-            wheel: true,
+            wheel: false,
             startScale: 0.8,
             maxScale: 4,
             minScale: 0.25,
@@ -79,6 +86,14 @@
             toolbox: ContinuousToolboxPlugin.ContinuousToolbox,
             flyoutsVerticalToolbox: ContinuousToolboxPlugin.ContinuousFlyout,
             metricsManager: ContinuousToolboxPlugin.ContinuousMetrics,
+        },
+        move: {
+            scrollbars: {
+                horizontal: true,
+                vertical: true,
+            },
+            drag: true,
+            wheel: true,
         },
     };
 
@@ -134,6 +149,11 @@
         compiler = new Compiler(workspace);
         // workspace was changed
         workspace.addChangeListener(updateGeneratedCode);
+
+        EventManager.allowAttachment();
+        EventManager.on(EventManager.EVENT_THEME_CHANGED, () => {
+            workspace.refreshTheme();
+        });
     });
 
     let fileMenu;
@@ -325,10 +345,8 @@
         class="project-name"
         type="text"
         placeholder="Extension ID (ex: extensionID)"
-        style={"margin-left:4px;margin-right:4px" +
-            (isExtensionIDInvalid(projectID)
-                ? ";background-color:#ffabab;text-decoration:red underline;"
-                : "")}
+        style="margin-left:4px;margin-right:4px"
+        data-invalid={isExtensionIDInvalid(projectID)}
         bind:value={projectID}
         on:change={updateGeneratedCode}
     />
@@ -515,6 +533,28 @@
         background: white;
     }
 
+    :global(body.dark) input[type="file"]::file-selector-button {
+        color: #ccc;
+        border-color: #c6c6c6;
+    }
+    :global(body.dark) input[type="file"]::file-selector-button:focus,
+    :global(body.dark) input[type="file"]::file-selector-button:hover,
+    :global(body.dark) input[type="file"]::file-selector-button:active {
+        background: #111;
+    }
+
+    :global(body.dark) input[type="text"],
+    :global(body.dark) input[type="number"] {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        color: white;
+    }
+    :global(body.dark) input[type="text"]:hover,
+    :global(body.dark) input[type="number"]:hover {
+        background: transparent;
+        border: 1px solid dodgerblue;
+    }
+
     .main {
         position: absolute;
         left: 0px;
@@ -559,6 +599,15 @@
         background-color: hsla(0, 100%, 100%, 1);
         color: black;
         transition: 0.25s;
+    }
+
+    .project-name[data-invalid="true"] {
+        background-color: #ffabab;
+        text-decoration: red underline;
+    }
+    :global(body.dark) .project-name[data-invalid="true"] {
+        background-color: #9b0000 !important;
+        text-decoration: red underline;
     }
 
     .extensionIcon {
@@ -607,6 +656,13 @@
     .extensionMenuPreview:active {
         background-color: #e9eef2;
     }
+    :global(body.dark) .extensionMenuPreview {
+        color: #ccc;
+    }
+    :global(body.dark) .extensionMenuPreview:focus,
+    :global(body.dark) .extensionMenuPreview:active {
+        background-color: #1e1e1e;
+    }
     .extensionBubbleIcon {
         width: 20px;
         height: 20px;
@@ -630,6 +686,9 @@
         justify-content: center;
 
         background: #f9f9f9;
+    }
+    :global(body.dark) .blockMenuButtons {
+        background-color: #111;
     }
 
     .blocklyWrapper {
@@ -656,6 +715,9 @@
 
         background: #f9f9f9;
     }
+    :global(body.dark) .codeActionsWrapper {
+        background-color: #111;
+    }
     .codeWrapper {
         position: relative;
         width: 100%;
@@ -673,6 +735,9 @@
         background: #f9f9f9;
         white-space: pre-wrap;
         font-family: monospace !important;
+    }
+    :global(body.dark) .codeDisplay {
+        background-color: #111;
     }
 
     .warning {

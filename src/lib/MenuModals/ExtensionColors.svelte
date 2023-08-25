@@ -32,6 +32,9 @@
 
     function getExampleData(color1, color2, color3, color3Included) {
         const tokens = ["[{{COLOR1}}]", "[{{COLOR2}}]", "[{{COLOR3}}]"];
+        if (color3Included && !color3) {
+            color3 = "#000000";
+        }
         if (!color3 || !color3Included) {
             const rgb = ColorUtil.hexToRGB(color1);
             const r = Math.max(0, rgb.r - 51);
@@ -176,6 +179,13 @@
         border: 1px solid rgba(0, 0, 0, 0.25);
     }
 
+    :global(body.dark) input[type="color"]::-webkit-color-swatch {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    :global(body.dark) input[type="color"]::-moz-color-swatch {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
     .bg {
         position: fixed;
         left: 0px;
@@ -200,6 +210,12 @@
         align-items: center;
         overflow: hidden;
     }
+    :global(body.dark) .bg {
+        background-color: #333333b0;
+    }
+    :global(body.dark) .modal {
+        background-color: #111;
+    }
 
     .modal-title {
         width: 100%;
@@ -210,6 +226,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+    :global(body.dark) .modal-title {
+        background-color: #333;
     }
     .modal-content {
         width: 100%;
@@ -238,6 +257,13 @@
     .extensionMenuPreview:focus,
     .extensionMenuPreview:active {
         background-color: #e9eef2;
+    }
+    :global(body.dark) .extensionMenuPreview {
+        color: #ccc;
+    }
+    :global(body.dark) .extensionMenuPreview:focus,
+    :global(body.dark) .extensionMenuPreview:active {
+        background-color: #1e1e1e;
     }
     .extensionBubbleIcon {
         width: 20px;
