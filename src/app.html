@@ -78,8 +78,9 @@
 			body.dark .blocklyScrollbarHandle {
 				fill: #ccc;
 			}
+			/* TODO: preserve grid */
 			body.dark .blocklyMainBackground {
-				fill: #101010 !important;
+				fill: #222 !important;
 			}
 
 			/* alert */
@@ -111,7 +112,6 @@
 				<img width="24" height="24" src="/images/close.svg">
 			</button>
 		</div>
-		<div style="display: contents">%sveltekit.body%</div>
 		<script>
 			// reset events
 			window.tbevents_ = [];
@@ -189,5 +189,6 @@
 			};
 			updateTheme();
 		</script>
+		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
