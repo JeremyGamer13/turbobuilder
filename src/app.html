@@ -43,11 +43,46 @@
 				font-size: 10px !important;
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 				padding: 0 8px;
+				color: #575E75 !important;
+			}
+			.blocklyScrollbarHandle {
+				opacity: 0.5;
+				fill: #575E75;
+			}
+			body.light .blocklyScrollbarHandle:hover {
+				fill: #454a5c;
+			}
+			body.dark .blocklyTreeLabel {
+				color: #ccc !important;
 			}
 			.categoryBubble {
-				border: 1px rgba(0,0,0,0.35) solid;
+				border: 1px rgba(0, 0, 0, 0.35) solid;
+			}
+			.blocklyTreeSelected {
+				background-color: rgba(0, 0, 0, 0.1) !important;
+			}
+			body.dark .blocklyTreeSelected {
+				background-color: rgba(255, 255, 255, 0.1) !important;
 			}
 
+			/* dark mode ovverrifdes */
+			body.dark .blocklyToolboxDiv {
+				background-color: #111 !important;
+			}
+			body.dark .blocklyFlyoutBackground {
+				fill: #111 !important;
+			}
+			body.dark .blocklyFlyoutLabelText {
+				fill: #ccc !important;
+			}
+			body.dark .blocklyScrollbarHandle {
+				fill: #ccc;
+			}
+			body.dark .blocklyMainBackground {
+				fill: #101010 !important;
+			}
+
+			/* alert */
 			.__alert_prompt {
 				position: fixed;
 				left: 24px;
@@ -119,7 +154,7 @@
 					body.setAttribute("class", "dark");
 					body.style.background = "#111";
 				} else {
-					body.removeAttribute("class");
+					body.setAttribute("class", "light");
 					body.style.background = "";
 				}
 				// update head
