@@ -8,7 +8,7 @@
     	<meta name="keywords" content="turbowarp, extensions, blocks" />
     	<meta name="author" content="JeremyGamer13" />
     	<meta name="theme-color" content="#ff4b4b" />
-    	<meta name="og:image" content="icon.png" />
+    	<meta name="og:image" content="/images/icon.png" />
 		<meta name="viewport" content="width=device-width" />
   		<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css" rel="stylesheet" />
 		<style>
@@ -70,5 +70,39 @@
 			</button>
 		</div>
 		<div style="display: contents">%sveltekit.body%</div>
+		<script>
+			// reset events
+			window.tbevents_ = [];
+
+			// if localhost, get rid of the alert
+			const isLocalHost = location.hostname === 'localhost';
+			if (isLocalHost) {
+				const alert = document.getElementById('Zm5BSEgzQW5HeW9yZkFkNEhpbGJiamtpZmdoOGNDc2lMR29JSzF0K2JnPT0=');
+				alert.remove();
+			}
+
+			// handle theme updating
+			const body = document.body;
+			const updateTheme = () => {
+				const mode = localStorage.getItem('tb:theme');
+				if (mode === 'dark') {
+					body.setAttribute("class", "dark");
+					body.style.background = "#111";
+				} else {
+					body.removeAttribute("class");
+					body.style.background = "";
+				}
+			};
+
+			window.themeUpdated_ = () => {
+				updateTheme();
+				for (const event in window.tbevents_) {
+					if (event.type === 'THEME') {
+						event.callback();
+					}
+				}
+			};
+			updateTheme();
+		</script>
 	</body>
 </html>
