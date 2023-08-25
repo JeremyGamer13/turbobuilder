@@ -42,7 +42,7 @@
         grid: {
             spacing: 25,
             length: 3,
-            colour: "#00000022",
+            colour: "#00000011",
             snap: false,
         },
         zoom: {
