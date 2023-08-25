@@ -115,9 +115,10 @@
             </div>
         </div>
         <div class="modal-buttons">
-            <button class="button-accept" on:click={event}>OK</button>
-            <div style="margin-left:6px" />
             <button class="button-cancel" on:click={cancel}>Cancel</button>
+            <div style="margin-left:6px" />
+            <button class="button-accept" on:click={event}>OK</button>
+            <div style="margin-left:24px" />
         </div>
     </div>
 </div>
@@ -241,7 +242,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: center;
+        justify-content: right;
     }
 
     .extensionMenuPreview {
